@@ -1,0 +1,61 @@
+(deftemplate Money   (slot amount)) ;;we are defining the templates here, (the template can have multiple slots,
+(deftemplate Fuel (slot type))      ;; but because I am still noob I created it simple, these are like the variables
+(deftemplate Car (slot make))       ;; these are like the variables - e.g we can assign values to them and they can have different data type(int,string double etc)
+
+;;; WE COLLECT THE DATA FROM THE USER FIRST BY CREATING 2 SIMPLE RULES FOR MONEY AND FUEL TYPE
+(defrule Money  ;;; we define the rule by naming it (the slot and the rule does not have to have the same)
+   =>
+   (printout t "How much do you want to spend ?  ")     ;; prompts the user to input something ( you can tell him what you expect him as an input)
+   (bind ?response (read))                              ;;  the command reads the input and then prepares to assign it to a slot below
+   (assert (Money (amount ?response)))                  ;; the "amount" slot is being filled in the template "Money" with "XXX$"
+
+   
+(defrule Fuel
+   =>
+   (printout t "What do you want to drive ? Diesel or Benzine ")   ;;  prompt for the user like above you can specify what you want as an input
+   (bind ?response (read))                                         ;;  read and get it ready for assignment in the slot "type"
+   (assert (Fuel (type ?response)))                                ;;  the "type" slot in "Fuel" template fills with 
+   
+
+;;; BASED ON THE USER INPUT WE CREATE THE NEW RULES TO CHECK WHAT WOULD SUIT THE USER BASED ON HIS ANSWERS WITH CONDITIONS WE SET
+
+
+(defrule Mercedes-Diesel
+   (Money (amount ?t)) ;; we check the "Money" template with slot "amount" if it is bigger than the temporary variable we create below
+   (test (>= ?t 10000)) ;; we create a temporary variable to use above and initialize it with a value we decide
+   (Fuel (type Diesel)));; we will be checking if the "Fuel" template slot "type" is diesel in this case
+   =>
+   (assert (Car (make Mercedes)));; we insert in the "Car" template's slot "make" Mercedes
+   (printout t "You want to buy ?make CLK with 2 or 3 litres engine or S-class with 5 litres engine" crlf)) ;; and prompt the user with his best option
+
+
+(defrule Mercedes-Benzine ;; respectivle the same is done for each model we want to compare for
+   (Money (amount ?t))
+   (test (>= ?t 10000))
+   (Fuel (type Benzine)))
+   =>
+   (assert (Car (make Mercedes)))
+   (printout t "You want to buy ?make E-class with 2.8 or 4.2 litres engine or C-class with 6.5 litres engine" crlf))
+
+(defrule BMW-Benzine
+   (Money (amount ?t))
+   (test (<= ?t 10000))
+   (Fuel (type Benzine)))
+   =>
+   (assert (Car (make BMW )))
+   (printout t "You want to buy ?make 328 Coupe , 530 Sedan or 330 Coupe" crlf))
+   
+   (defrule Audi-Diesel
+   (Money (amount ?t))
+   (test (<= ?t 10000))
+   (Fuel (type Diesel)))
+   =>
+   (assert (Car (make Audi )))
+   (printout t "You want to buy ?make A3 1.9 TDI , A4 2.0 TDI , A5 3.0 TDI" crlf))
+
+
+;(watch all)
+(reset) ;; reset all current facts
+(run) ;; prompt user for new facts
+;(facts)
+
